@@ -13,8 +13,8 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
 
   try {
     await registerUseCase({ name, email, password })
-  } catch {
-    return reply.status(409).send()
+  } catch (err) {
+    return reply.status(409).send(err)
   }
 
   return reply.status(201).send()
