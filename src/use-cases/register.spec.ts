@@ -1,15 +1,20 @@
 import { UserAlreadyExistError } from './errors/user-already-exist-error'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { RegisterUseCase } from './register'
 import { compare } from 'bcryptjs'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 
-describe('Register Use Case', () => {
-  it('should be able to register', async () => {
-    const userRepository = new InMemoryUserRepository()
-    const registerUseCase = new RegisterUseCase(userRepository)
+let userRepository: InMemoryUserRepository
+let sut: RegisterUseCase
 
-    const { user } = await registerUseCase.execute({
+describe('Register Use Case', () => {
+  beforeEach(() => {
+    userRepository = new InMemoryUserRepository()
+    sut = new RegisterUseCase(userRepository)
+  })
+
+  it('should be able to register', async () => {
+    const { user } = await sut.execute({
       name: 'Everton',
       email: 'everton@gmail.com',
       password: 'teste1234',
@@ -19,10 +24,7 @@ describe('Register Use Case', () => {
   })
 
   it('should hash user upon registration', async () => {
-    const userRepository = new InMemoryUserRepository()
-    const registerUseCase = new RegisterUseCase(userRepository)
-
-    const { user } = await registerUseCase.execute({
+    const { user } = await sut.execute({
       name: 'Everton',
       email: 'everton@gmail.com',
       password: 'teste1234',
@@ -34,17 +36,14 @@ describe('Register Use Case', () => {
   })
 
   it('should be possible to register only once with the email', async () => {
-    const userRepository = new InMemoryUserRepository()
-    const registerUseCase = new RegisterUseCase(userRepository)
-
-    await registerUseCase.execute({
+    await sut.execute({
       name: 'Everton',
       email: 'everton@gmail.com',
       password: 'teste1234',
     })
 
     await expect(() =>
-      registerUseCase.execute({
+      sut.execute({
         name: 'Everton',
         email: 'everton@gmail.com',
         password: 'teste1234',
