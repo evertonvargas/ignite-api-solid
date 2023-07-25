@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { hash } from 'bcryptjs'
-import { GetProfileUseCase } from './get-profile'
-import { UserProfileError } from './errors/user-profile-error'
+import { GetProfileUseCase } from './../get-profile'
+import { UserProfileError } from './../errors/user-profile-error'
 
 let userRepository: InMemoryUserRepository
 let sut: GetProfileUseCase

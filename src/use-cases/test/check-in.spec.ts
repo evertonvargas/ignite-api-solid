@@ -1,10 +1,10 @@
+import { CheckInUseCase } from './../check-in'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { CheckInUseCase } from './check-in'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
 import { afterEach } from 'node:test'
-import { MaxNumberOfCheckInsError } from './errors/max-number-of-check-ins-error'
+import { MaxNumberOfCheckInsError } from './../errors/max-number-of-check-ins-error'
 import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository'
-import { Decimal } from '@prisma/client/runtime/library'
+import { MaxDistanceError } from '../errors/max-distance-error'
 
 let checkInsRepository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
@@ -24,13 +24,13 @@ describe('Check in Use Case', () => {
   })
 
   it('should be able to check in', async () => {
-    gymsRepository.items.push({
+    await gymsRepository.create({
       id: 'gym-01',
       title: 'Javascript Gym',
       description: '',
       phone: '',
-      latitude: new Decimal(0),
-      longitude: new Decimal(0),
+      latitude: 0,
+      longitude: 0,
     })
 
     const { checkIn } = await sut.execute({
@@ -44,13 +44,13 @@ describe('Check in Use Case', () => {
   })
 
   it('should not be able to check in twice in the same day', async () => {
-    gymsRepository.items.push({
+    await gymsRepository.create({
       id: 'gym-01',
       title: 'Javascript Gym',
       description: '',
       phone: '',
-      latitude: new Decimal(0),
-      longitude: new Decimal(0),
+      latitude: 0,
+      longitude: 0,
     })
 
     vi.setSystemTime(new Date(2022, 0, 20, 8, 0, 0))
@@ -73,13 +73,13 @@ describe('Check in Use Case', () => {
   })
 
   it('should be able to check in twice but in different days', async () => {
-    gymsRepository.items.push({
+    await gymsRepository.create({
       id: 'gym-01',
       title: 'Javascript Gym',
       description: '',
       phone: '',
-      latitude: new Decimal(0),
-      longitude: new Decimal(0),
+      latitude: 0,
+      longitude: 0,
     })
 
     vi.setSystemTime(new Date(2022, 0, 20, 8, 0, 0))
@@ -104,13 +104,13 @@ describe('Check in Use Case', () => {
   })
 
   it('should not be able to check in distante gym', async () => {
-    gymsRepository.items.push({
+    await gymsRepository.create({
       id: 'gym-01',
       title: 'Javascript Gym',
       description: '',
       phone: '',
-      latitude: new Decimal(-29.4188252),
-      longitude: new Decimal(-53.0261684),
+      latitude: -29.4188252,
+      longitude: -53.0261684,
     })
 
     await expect(() =>
@@ -120,6 +120,6 @@ describe('Check in Use Case', () => {
         userlongitude: -29.4465147,
         userlatitude: -52.9648398,
       }),
-    ).rejects.toBeInstanceOf(Error)
+    ).rejects.toBeInstanceOf(MaxDistanceError)
   })
 })
