@@ -1,4 +1,4 @@
-import { UsersRepository } from '@/repositories/user-repository'
+import { UsersRepository } from '@/repositories/users-repository'
 import { hash } from 'bcryptjs'
 import { UserAlreadyExistError } from './errors/user-already-exist-error'
 

@@ -1,4 +1,4 @@
-import { UsersRepository } from '@/repositories/user-repository'
+import { UsersRepository } from '@/repositories/users-repository'
 import { User } from '@prisma/client'
 import { UserProfileError } from './errors/user-profile-error'
 
